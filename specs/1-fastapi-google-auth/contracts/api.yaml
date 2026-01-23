@@ -1,0 +1,281 @@
+openapi: 3.0.0
+info:
+  title: TaskPilot Backend API
+  description: API for the TaskPilot backend, featuring Google authentication and secure task management.
+  version: 1.0.0
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    User:
+      type: object
+      properties:
+        google_user_id:
+          type: string
+          description: Unique identifier from Google.
+        name:
+          type: string
+          description: User's full name.
+        email:
+          type: string
+          format: email
+          description: User's email address.
+        profile_picture_url:
+          type: string
+          format: uri
+          description: URL to user's profile picture.
+      required:
+        - google_user_id
+        - name
+        - email
+
+    Task:
+      type: object
+      properties:
+        task_id:
+          type: string
+          description: Unique identifier for the task.
+        user_id:
+          type: string
+          description: ID of the owning user.
+        title:
+          type: string
+          description: The title of the task.
+          maxLength: 255
+        description:
+          type: string
+          nullable: true
+          description: Optional detailed task description.
+        is_completed:
+          type: boolean
+          description: Completion status of the task.
+          default: false
+      required:
+        - title
+        - user_id
+
+    TaskCreate:
+      type: object
+      properties:
+        title:
+          type: string
+          description: The title of the task.
+          maxLength: 255
+        description:
+          type: string
+          nullable: true
+          description: Optional detailed task description.
+      required:
+        - title
+
+    TaskUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+          description: The title of the task.
+          maxLength: 255
+        description:
+          type: string
+          nullable: true
+          description: Optional detailed task description.
+        is_completed:
+          type: boolean
+          description: Completion status of the task.
+      minProperties: 1
+
+
+paths:
+  /auth/google:
+    post:
+      summary: Authenticate with Google ID Token
+      operationId: authenticateGoogle
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id_token:
+                  type: string
+                  description: Google ID Token received from the frontend.
+              required:
+                - id_token
+      responses:
+        '200':
+          description: Successful authentication, returns internal JWT.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                    description: Internal JWT for API access.
+                  token_type:
+                    type: string
+                    description: Type of the token, usually 'bearer'.
+                required:
+                  - access_token
+                  - token_type
+        '401':
+          description: Invalid or expired Google ID Token.
+
+  /api/{user_id}/tasks:
+    parameters:
+      - name: user_id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: The ID of the authenticated user.
+    get:
+      summary: Get all tasks for the authenticated user
+      operationId: getTasks
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: A list of tasks.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+        '401':
+          description: Unauthorized.
+        '403':
+          description: Forbidden (if user_id in path doesn't match authenticated user).
+    post:
+      summary: Create a new task for the authenticated user
+      operationId: createTask
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskCreate'
+      responses:
+        '201':
+          description: Task created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '401':
+          description: Unauthorized.
+        '403':
+          description: Forbidden (if user_id in path doesn't match authenticated user).
+
+  /api/{user_id}/tasks/{task_id}:
+    parameters:
+      - name: user_id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: The ID of the authenticated user.
+      - name: task_id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: The ID of the task.
+    get:
+      summary: Get a specific task by ID for the authenticated user
+      operationId: getTaskById
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Task details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '401':
+          description: Unauthorized.
+        '403':
+          description: Forbidden (if user_id in path doesn't match authenticated user).
+        '404':
+          description: Task not found or not owned by user.
+    put:
+      summary: Update a specific task by ID for the authenticated user
+      operationId: updateTask
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskUpdate'
+      responses:
+        '200':
+          description: Task updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '401':
+          description: Unauthorized.
+        '403':
+          description: Forbidden (if user_id in path doesn't match authenticated user).
+        '404':
+          description: Task not found or not owned by user.
+    delete:
+      summary: Delete a specific task by ID for the authenticated user
+      operationId: deleteTask
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: Task deleted successfully.
+        '401':
+          description: Unauthorized.
+        '403':
+          description: Forbidden (if user_id in path doesn't match authenticated user).
+        '404':
+          description: Task not found or not owned by user.
+
+  /api/{user_id}/tasks/{task_id}/toggle:
+    parameters:
+      - name: user_id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: The ID of the authenticated user.
+      - name: task_id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: The ID of the task.
+    patch:
+      summary: Toggle completion status of a specific task for the authenticated user
+      operationId: toggleTaskCompletion
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Task completion status toggled successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '401':
+          description: Unauthorized.
+        '403':
+          description: Forbidden (if user_id in path doesn't match authenticated user).
+        '404':
+          description: Task not found or not owned by user.

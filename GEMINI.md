@@ -20,6 +20,11 @@ The application follows a decoupled, three-tier architecture:
 
 Authentication is handled via JWTs, ensuring secure and stateless communication between the frontend and backend.
 
+## 3.5. Access Control
+The application provides two tiers of access:
+- **Public Access**: All users, including anonymous (unauthenticated) users, can create, read, update, and delete TO-DO tasks.
+- **Authenticated Access**: Access to the AI chatbot is restricted to users who have authenticated with Google.
+
 ## 4. Frontend Specification
 The UI design philosophy is modern, clean, and professional.
 - **Layout**: A responsive design with a left sidebar for desktop and a top header with a hamburger menu for mobile.

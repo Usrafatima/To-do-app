@@ -1,0 +1,30 @@
+# Project Constitution (Phase 4)
+
+## 1. Vision & Scope
+**Project:** TaskPilot (Advanced Full-Stack Todo App)
+**Phase:** 4 - Intermediate Features & Scalability Readiness
+**Goal:** Deliver a robust, feature-rich task management system with advanced organization (tags, priorities), search capabilities, basic notifications, and AI integration, while structurally preparing the codebase for Phase 5 distributed architecture (Dapr/K8s).
+
+## 2. Technology Stack
+- **Frontend:** Next.js 14 (App Router), TypeScript, Tailwind CSS, Shadcn/UI (optional/custom).
+- **Backend:** Python 3.12+, FastAPI, SQLModel (ORM).
+- **Database:** PostgreSQL (Neon Serverless).
+- **AI/LLM:** Google Gemini via LangChain/Direct API.
+- **Containerization:** Docker (Local Development).
+
+## 3. Core Principles & Non-Negotiables
+1.  **Strict Type Safety:** No `any` in TypeScript. Full Pydantic models for all Backend request/responses.
+2.  **API-First Design:** All features must start with an OpenAPI specification (Backend) before Frontend implementation.
+3.  **Modular Architecture:** Backend logic must be separated into `routers`, `services`, and `models`. No business logic in route handlers.
+4.  **Event-Driven Readiness:**
+    - Service-to-service communication should be designed to be asynchronous where possible.
+    - **Rule:** Do not tightly couple the Notification logic to Task logic. Use service interfaces that can later be swapped for Dapr Pub/Sub.
+5.  **State Management:** Frontend state (filters, sort order) must be URL-driven or context-managed to ensure shareability and persistence.
+6.  **Security:**
+    - JWT based Authentication (Better Auth / Custom implementation).
+    - No secrets in code. Use `.env` files.
+
+## 4. Phase 5 Readiness Rules
+- **Configuration:** All external endpoints (DB, AI, Email) must be configurable via environment variables to support K8s ConfigMaps later.
+- **Logging:** Structured logging (JSON preferred) to support future centralized logging systems (ELK/Fluentd).
+- **Health Checks:** Implement `/healthz` endpoints for liveness/readiness probes.

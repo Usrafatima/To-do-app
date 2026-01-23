@@ -1,41 +1,34 @@
-# Quickstart for Hackathon 2 Frontend
+# Quickstart: Frontend
 
-This guide provides instructions on how to set up and run the frontend application.
+This guide explains how to set up and run the frontend application.
 
 ## Prerequisites
-
 - Node.js (v18 or later)
 - npm or yarn
 
-## Installation
+## Setup
+1. Navigate to the `frontend` directory:
+   ```bash
+   cd frontend
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-1.  Clone the repository:
-    ```bash
-    git clone <repository-url>
-    ```
-2.  Navigate to the frontend directory:
-    ```bash
-    cd frontend
-    ```
-3.  Install the dependencies:
-    ```bash
-    npm install
-    ```
-    or
-    ```bash
-    yarn install
-    ```
+## Running the Development Server
+1. From the `frontend` directory, run the following command:
+   ```bash
+   npm run dev
+   ```
+2. Open your browser and navigate to `http://localhost:3000` to see the application.
 
-## Running the application
-
-To run the development server, execute the following command:
-
-```bash
-npm run dev
-```
-or
-```bash
-yarn dev
-```
-
-The application will be available at `http://localhost:3000`.
+## Building for Production
+1. To create a production build, run:
+   ```bash
+   npm run build
+   ```
+2. To start the production server, run:
+   ```bash
+   npm start
+   ```

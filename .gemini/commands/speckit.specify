@@ -1,0 +1,47 @@
+# Functional Specifications (Phase 4)
+
+## Feature 1: Advanced Task Organization
+**User Story:** As a power user, I want to organize tasks with priorities and tags so that I can focus on what matters.
+
+**Acceptance Criteria:**
+1.  **Priorities:** User can assign `Low`, `Medium`, `High`, `Critical` priority to a task.
+    - Default is `Medium`.
+    - Visual indicator (color/icon) for each level.
+2.  **Tags:** User can add multiple text tags (e.g., "Work", "Personal") to a task.
+    - Backend stores as `JSON` or `ARRAY`.
+    - Frontend allows creating new tags on the fly.
+
+## Feature 2: Search, Filter, & Sort
+**User Story:** As a user with many tasks, I want to find specific items quickly without scrolling.
+
+**Acceptance Criteria:**
+1.  **Search:** Real-time text search against Task Title and Description.
+2.  **Filter:**
+    - Filter by Status (Completed/Active).
+    - Filter by Priority.
+    - Filter by specific Tags.
+3.  **Sort:**
+    - Sort by Due Date (Asc/Desc).
+    - Sort by Priority (High to Low).
+    - Sort by Created Date.
+4.  **Persistence:** Filters should be applied via API query parameters (server-side filtering preferred for scalability).
+
+## Feature 3: Notifications & Reminders
+**User Story:** As a user, I want to be notified of approaching deadlines so I don't miss tasks.
+
+**Acceptance Criteria:**
+1.  **Due Dates:** Tasks must accept a `datetime` for deadlines.
+2.  **Notification Trigger:** System checks for tasks due within X minutes.
+    - *Phase 4 Scope:* Background scheduler (APScheduler or FastAPI lifespan task) checking DB every minute.
+3.  **Delivery:**
+    - In-App Toast Notification (Frontend).
+    - Simulated Email/Push Log (Backend console or basic email service).
+
+## Feature 4: AI Chatbot Integration (Enhanced)
+**User Story:** As a user, I want to talk to my task list to query or modify it using natural language.
+
+**Acceptance Criteria:**
+1.  **Context Awareness:** Chatbot knows the current user's active tasks.
+2.  **Actions:**
+    - "Show me my high priority tasks" -> Returns filtered list.
+    - "Remind me to call John in 1 hour" -> Creates task with due date.

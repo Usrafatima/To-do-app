@@ -1,0 +1,13 @@
+fastapi
+uvicorn
+sqlmodel
+psycopg2-binary
+python-jose[cryptography]
+passlib[bcrypt]
+python-multipart
+pydantic-settings
+python-dotenv
+huggingface_hub
+pytest
+google-auth
+requests

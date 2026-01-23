@@ -1,0 +1,61 @@
+openapi: 3.0.0
+info:
+  title: Phase III AI Chat Backend API
+  version: 1.0.0
+  description: API for interacting with the AI-powered task management chatbot.
+paths:
+  /api/v1/chat:
+    post:
+      summary: Send a message to the AI Chat Agent
+      description: >
+        Sends a message to the agent and receives a response. Can be used to start a new
+        conversation or continue an existing one.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                conversation_id:
+                  type: string
+                  format: uuid
+                  description: Optional ID of an existing conversation to continue.
+                message:
+                  type: string
+                  description: The user's message to the agent.
+              required:
+                - message
+      responses:
+        '200':
+          description: Successful response from the agent.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  conversation_id:
+                    type: string
+                    format: uuid
+                    description: The ID of the conversation, to be used in subsequent requests.
+                  response:
+                    type: string
+                    description: The agent's text response to the user.
+                  tool_calls:
+                    type: array
+                    items:
+                      type: object
+                    description: Optional list of tools the agent called. For debugging or rich UI rendering.
+        '401':
+          description: Unauthorized. The provided JWT is invalid or expired.
+        '422':
+          description: Validation Error. The request body is malformed.
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token for user authentication.

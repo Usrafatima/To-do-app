@@ -1,40 +1,41 @@
-# Implementation Plan: Hackathon 2 Phase 2 Frontend
+# Implementation Plan: TaskPilot Frontend
 
-**Branch**: `2-phase-2-frontend` | **Date**: 2026-01-09 | **Spec**: `/.specify/memory/constitution.md`
-**Input**: Feature specification from `/.specify/memory/constitution.md`
-
-**Note**: This template is filled in by the `/sp.plan` command. See `.specify/templates/commands/plan.md` for the execution workflow.
+**Branch**: `feature/homepage-ui` | **Date**: 2026-01-18 | **Spec**: [specs/2-phase-2-frontend/spec.md](specs/2-phase-2-frontend/spec.md)
+**Input**: Feature specification from `specs/2-phase-2-frontend/spec.md` (which is now aligned with the broader project constitution)
 
 ## Summary
-
-This plan outlines the steps for building the frontend of the Hackathon 2 project, as part of Phase 2. The frontend will be a Next.js application with features for user authentication, task management, and a responsive dashboard, as detailed in the project constitution.
+This plan details the implementation of a modern, responsive frontend for the TaskPilot project, now integrating with a backend that features Google Authentication and robust task management. The technical approach remains Next.js (React/TypeScript) for the UI, ensuring seamless interaction with the newly defined backend capabilities while adhering to principles of clean architecture and user experience.
 
 ## Technical Context
 
-**Language/Version**: TypeScript (using Next.js)
-**Primary Dependencies**: Next.js, React
-**Storage**: N/A (Frontend will interact with a backend API)
-**Testing**: Jest, React Testing Library (assumed, pending confirmation)
-**Target Platform**: Web Browsers (Chrome, Firefox, Safari)
-**Project Type**: Web application
-**Performance Goals**: Fast page loads, responsive UI.
-**Constraints**: The project must adhere to the architecture and specifications outlined in the project constitution.
-**Scale/Scope**: User authentication and CRUD operations for tasks, as defined in the constitution.
+**Language/Version**: TypeScript (latest stable)
+**Primary Dependencies**: Next.js, React, Tailwind CSS
+**Storage**: N/A (Frontend is stateless regarding user data, which is managed by the backend)
+**Testing**: Jest, React Testing Library
+**Target Platform**: Web (Modern Browsers)
+**Project Type**: Web Application (Frontend)
+**Performance Goals**: First Contentful Paint (FCP) < 1.8s, interactive UI with no jank.
+**Constraints**: Must adhere to the backend API contracts defined by the new constitution for authentication and task management. Must be fully responsive.
+**Scale/Scope**: Multi-user (via backend auth), comprehensive task management UI, ~5-10 components for the core task features.
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+*GATE: Must pass before proceeding.*
 
-- [x] **Spec-Driven Development**: This plan originates from the project constitution.
-- [x] **Agentic Workflow**: This plan will be broken down into tasks for AI implementation.
-- [ ] **No Manual Coding**: Does this plan rely solely on AI-generated code? (NEEDS CLARIFICATION)
-- [x] **In-Memory Data**: The frontend does not handle data persistence.
-- [x] **Scope Control**: The scope is limited to the Core Features defined in the constitution.
-- [x] **Clean Code**: The proposed structure promotes clean code standards.
-- [x] **Python & Tooling**: The project adheres to the specified stack (Python backend, Next.js frontend).
-- [x] **Required Features**: This plan addresses the frontend implementation of the core features.
-- [x] **Documentation Discipline**: The output will be documented according to the constitution.
-- [x] **Evaluation Criteria**: The plan includes steps to meet the evaluation criteria inferred from the constitution.
+- [X] **Principle 1: Google Authentication**: The frontend plan accounts for user interaction with Google login and sending ID tokens to the backend.
+- [X] **Principle 2: Authenticated Task Endpoints**: The frontend design assumes and will interact with authenticated task endpoints requiring user IDs.
+- [X] **Principle 3: Security & Best Practices**: The frontend handles JWTs and respects backend security responses (e.g., 401 Unauthorized).
+- [X] **Principle 4: Data Models**: The frontend will consume data models (Users, Tasks) as defined by the backend constitution.
+- [X] **Principle 5: Deliverables**: The frontend plan contributes to the overall project deliverables, including integration instructions.
+- [X] **Spec-Driven Development**: This plan originates from an approved spec and the overarching constitution.
+- [X] **Agentic Workflow**: This plan will be broken down into tasks for AI implementation.
+- [X] **No Manual Coding**: This plan relies on AI-generated code.
+- [X] **In-Memory Data**: The design avoids direct file/database persistence on the frontend.
+- [X] **Scope Control**: The scope is limited to frontend UI that integrates with the new backend features.
+- [X] **Clean Code**: The proposed structure promotes clean code standards.
+- [X] **Required Features**: This plan addresses the frontend implementation of features requiring the new authentication and task management.
+- [X] **Documentation Discipline**: The output will be documented according to the constitution.
+- [X] **Evaluation Criteria**: The plan includes steps to meet the evaluation criteria from the spec.
 
 ## Project Structure
 
@@ -42,78 +43,42 @@ This plan outlines the steps for building the frontend of the Hackathon 2 projec
 
 ```text
 specs/2-phase-2-frontend/
-├── plan.md              # This file (/sp.plan command output)
-├── research.md          # Phase 0 output (/sp.plan command)
-├── data-model.md        # Phase 1 output (/sp.plan command)
-├── quickstart.md        # Phase 1 output (/sp.plan command)
-├── contracts/           # Phase 1 output (/sp.plan command)
-└── tasks.md             # Phase 2 output (/sp.tasks command - NOT created by /sp.plan)
+├── plan.md              # This file
+├── research.md          # Phase 0 output
+├── data-model.md        # Phase 1 output
+├── quickstart.md        # Phase 1 output
+├── contracts/           # Phase 1 output
+└── tasks.md             # Phase 2 output (created by /sp.tasks)
 ```
 
 ### Source Code (repository root)
+
 ```text
 frontend/
 ├── src/
+│   ├── app/
+│   │   ├── layout.tsx
+│   │   └── page.tsx
 │   ├── components/
-│   ├── pages/
-│   └── services/
+│   │   ├── tasks/
+│   │   │   ├── TaskContainer.tsx
+│   │   │   ├── TaskList.tsx
+│   │   │   ├── TaskItem.tsx
+│   │   │   └── AddTask.tsx
+│   │   └── timer/
+│   │       ├── FocusTimer.tsx
+│   │       └── TimerControls.tsx
+│   ├── styles/
+│   │   └── globals.css
+│   └── lib/
+│       └── apiClient.ts # Mock client for Phase 1 logic
 └── tests/
+    └── unit/
+        ├── TaskContainer.test.tsx
+        └── FocusTimer.test.tsx
 ```
 
-**Structure Decision**: The project will use a dedicated `frontend` directory, as this is a web application. The backend will be in a separate `backend` directory.
-
-## Implementation Tasks
-
-The following is a list of tasks to be implemented for the frontend.
-
-GROUP 1: FRONTEND FOUNDATION
-
-1. Initialize Next.js project with App Router.
-2. Set up project folder structure: components, pages, layouts, styles, assets, utils.
-3. Create root layout and page placeholders.
-4. Configure global styles and theme variables (colors, fonts, spacing).
-5. Scaffold base UI structure: header, footer, main content.
-
-GROUP 2: AUTHENTICATION UI
-6. Build Login screen UI with email/password fields.
-7. Build Signup screen UI with necessary input fields.
-8. Add UI-level validation for login/signup forms.
-9. Add loading and error states for auth forms.
-10. Implement Logout UI handling.
-
-GROUP 3: DASHBOARD & NAVIGATION
-11. Build Sidebar UI container.
-12. Add navigation items (Dashboard, Tasks, Profile, etc.).
-13. Implement active state indication for navigation.
-14. Make sidebar responsive (collapse/toggle for mobile/tablet).
-15. Build Header (if applicable) with user avatar/notifications.
-
-GROUP 4: TASK MANAGEMENT UI
-16. Build Task list container.
-17. Create reusable Task card component.
-18. Build Create Task UI form.
-19. Build Edit Task UI form.
-20. Build Delete Task UI option.
-21. Build Complete/Toggle task UI.
-22. Add empty and loading states for task list.
-
-GROUP 5: RESPONSIVE & UX POLISH
-23. Implement Mobile layout adjustments.
-24. Implement Tablet layout adjustments.
-25. Add transitions and visual feedback for interactions.
-26. Ensure accessibility basics (aria labels, contrast, keyboard navigation).
-27. Perform UI consistency checks across screens.
-
-GROUP 6: API INTEGRATION (Frontend-side)
-28. Set up API client (frontend placeholder).
-29. Handle JWT or session conceptually in UI.
-30. Show loading states during API calls.
-31. Show error handling UI for API failures.
+**Structure Decision**: The structure is a standard Next.js application. `apiClient.ts` will initially contain mock implementations, but will be updated to interact with the new authenticated backend endpoints.
 
 ## Complexity Tracking
-
-> **Fill ONLY if Constitution Check has violations that must be justified**
-
-| Violation | Why Needed | Simpler Alternative Rejected Because |
-|-----------|------------|-------------------------------------|
-|           |            |                                     |
+No violations of the constitution were necessary.

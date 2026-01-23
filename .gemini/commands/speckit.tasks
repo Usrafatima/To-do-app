@@ -1,0 +1,54 @@
+# Task List (Phase 4)
+
+## Database & Models
+- [ ] **TASK-401:** Update `Task` SQLModel in backend.
+    - Add `priority` (str/enum), `tags` (List[str]), `due_date` (datetime).
+    - Generate migration script (Alembic) or update `create_db_and_tables`.
+- [ ] **TASK-402:** Seed database with sample data containing varying priorities and tags for testing.
+
+## Backend Implementation
+- [ ] **TASK-403:** Update `POST /tasks` and `PUT /tasks/{id}` schemas to accept new fields.
+- [ ] **TASK-404:** Refactor `GET /tasks` to support filtering.
+    - Implement `Query(None)` parameters for `priority`, `search_term`.
+    - Apply SQLModel `.where()` clauses dynamically.
+- [ ] **TASK-405:** Refactor `GET /tasks` to support sorting.
+    - Implement `sort_by` query param (`due_date`, `priority`).
+- [ ] **TASK-406:** Implement `NotificationService` stub.
+    - Create background task loop in `main.py` (`@app.on_event("startup")`).
+    - Logic: Query tasks due in < 15 mins -> Log to console "SENDING NOTIFICATION".
+    - Expose `/healthz` endpoint.
+
+## Docker Integration
+- [ ] **TASK-420:** Create `backend/Dockerfile`.
+    - Python 3.12-slim base.
+    - Install requirements.
+    - Expose port 8000.
+- [ ] **TASK-421:** Create `frontend/Dockerfile`.
+    - Node.js 20-alpine base.
+    - Multi-stage build (deps -> builder -> runner).
+    - Expose port 3000.
+- [ ] **TASK-422:** Create root `docker-compose.yml`.
+    - Define `backend`, `frontend`.
+    - Inject environment variables.
+    - Ensure networking between containers.
+
+## Frontend Implementation
+- [ ] **TASK-407:** Update TypeScript interfaces (`Task`, `NewTask`) to match backend models.
+- [ ] **TASK-408:** Update `TaskItem` component.
+    - Render Priority Badge (Red/Yellow/Green).
+    - Render Tags as small pills.
+    - Render Due Date with countdown.
+- [ ] **TASK-409:** Create `FilterControls` component.
+    - Search input.
+    - Priority Dropdown.
+    - Sort Button.
+- [ ] **TASK-410:** Integrate Filtering API.
+    - Update `apiClient.ts` `getTasks` to accept arguments.
+    - Wire up `FilterControls` to trigger API re-fetch (debounce search input).
+
+## Chatbot & Advanced
+- [ ] **TASK-411:** Update Chatbot System Prompt.
+    - Teach it about the new fields (Priority, Tags) so it can generate correct JSON for task creation.
+- [ ] **TASK-412:** Verify "Phase 5 Readiness".
+    - Ensure no hardcoded DB URLs.
+    - Ensure Notification logic is isolated in its own service module.

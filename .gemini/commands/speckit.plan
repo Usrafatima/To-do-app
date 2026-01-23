@@ -1,0 +1,48 @@
+# Architecture & Plan (Phase 4)
+
+## 1. High-Level Architecture
+```mermaid
+graph TD
+    User[Web Browser] -->|HTTPS| NextJS[Frontend (Next.js)]
+    NextJS -->|REST API| API[Backend (FastAPI)]
+    
+    subgraph "Backend Services"
+        API --> Auth[Auth Service]
+        API --> TaskService[Task Service]
+        API --> ChatService[Chat Service]
+        API --> NotifService[Notification Service (Stub)]
+    end
+    
+    TaskService --> DB[(PostgreSQL)]
+    ChatService --> LLM[Google Gemini API]
+    NotifService -->|Check Schedule| DB
+```
+
+## 2. Component Design
+
+### Frontend (Next.js)
+- **`TaskContext` / `Store`:** Updated to hold filter states (`searchQuery`, `priorityFilter`, `sortOrder`).
+- **Components:**
+  - `FilterBar`: UI for inputs and dropdowns.
+  - `TaskItem`: Updated to display tags badges and priority color codes.
+  - `NotificationToast`: To display real-time alerts (via polling or SSE).
+
+### Backend (FastAPI)
+- **Data Models (`models.py`):**
+  - Update `Task` table: Add `priority` (Enum), `tags` (JSON), `due_date` (DateTime).
+- **API Layer (`routers/tasks.py`):**
+  - Update `GET /tasks`: Accept query params `?q=...&priority=...&sort=...`.
+  - Implement dynamic SQLModel query building based on params.
+- **Notification Service (`services/notifications.py`):**
+  - Implement a basic `check_upcoming_deadlines()` function.
+  - Run via `FastAPI.concurrency.run_in_threadpool` or `APScheduler` (simulating a future Dapr Job).
+
+## 3. Phase 5 Readiness Strategy
+- **Interfaces:** The `NotificationService` will be defined as an Interface/Abstract Base Class.
+  - *Phase 4 Implementation:* Direct DB polling + Console Log.
+  - *Phase 5 Implementation:* Dapr Input Binding / Kafka Consumer.
+- **Docker:** Ensure `docker-compose.yml` fully orchestrates Backend, Frontend, and DB to mimic a pod structure.
+
+## 4. Deployment
+- **Local:** `docker-compose up`
+- **Database:** Neon (Cloud) or Postgres container (Local).

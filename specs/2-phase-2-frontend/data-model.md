@@ -1,22 +1,16 @@
-# Data Model for Hackathon 2
+# Frontend Data Model
 
-This document outlines the data models for the application, as specified in the project constitution.
+This document defines the data structures used within the frontend application.
 
-## User Model
+## Task
 
-| Field             | Type   | Description               |
-|-------------------|--------|---------------------------|
-| `id`              | PK     | Unique identifier for the user. |
-| `email`           | string | User's email address (unique). |
-| `hashed_password` | string | User's hashed password.   |
-| `full_name`       | string | User's full name.         |
+Represents a single to-do item.
 
-## Task Model
+**Fields**:
+- `id`: `string` (Unique identifier, e.g., a UUID)
+- `text`: `string` (The content of the task)
+- `isCompleted`: `boolean` (The completion status of the task)
 
-| Field         | Type      | Description                   |
-|---------------|-----------|-------------------------------|
-| `id`          | PK        | Unique identifier for the task. |
-| `title`       | string    | The title of the task.        |
-| `is_completed`| boolean   | Whether the task is completed or not (default: false). |
-| `due_date`    | timestamp | The due date of the task (nullable). |
-| `owner_id`    | FK        | Foreign Key to `users.id`.    |
+**State Transitions**:
+- A Task is created with `isCompleted: false`.
+- The `isCompleted` status can be toggled between `true` and `false`.

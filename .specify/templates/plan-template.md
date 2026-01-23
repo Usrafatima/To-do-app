@@ -29,18 +29,20 @@
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+*GATE: Must pass before proceeding.*
 
-- [ ] **Spec-Driven Development**: Does this plan originate from an approved spec?
-- [ ] **Agentic Workflow**: Will this plan be broken down into tasks for AI implementation?
-- [ ] **No Manual Coding**: Does this plan rely solely on AI-generated code?
-- [ ] **In-Memory Data**: Does the design avoid file/database persistence?
-- [ ] **Scope Control**: Is the scope limited to Phase I basic features?
-- [ ] **Clean Code**: Does the proposed structure promote clean code standards?
-- [ ] **Python & Tooling**: Does the plan adhere to Python 3.13+ and UV?
-- [ ] **Required Features**: Does this plan address one of the non-negotiable features?
-- [ ] **Documentation Discipline**: Will the output be documented according to the constitution?
-- [ ] **Evaluation Criteria**: Does the plan include steps to meet the evaluation criteria?
+- [ ] **Frontend is Source of Truth**: Does the plan conform to the Phase 2 frontend?
+- [ ] **No Unauthorized Frontend Refactors**: Does the plan avoid frontend refactors unless specified?
+- [ ] **Phase 1 is Historical Reference**: Is Phase 1 logic only used for historical reference?
+- [ ] **Backend Conforms to Frontend**: Does the backend plan support the frontend exactly?
+- [ ] **Chatbot Reuses Backend APIs**: If applicable, does the chatbot plan reuse backend APIs?
+- [ ] **No Duplicate Logic**: Does the plan avoid duplicating logic across layers?
+- [ ] **JWT-Based Authentication**: Does the plan use JWT-based auth (Better Auth compatible)?
+- [ ] **State in Neon PostgreSQL**: Is all state stored in Neon PostgreSQL?
+- [ ] **Stateless Server**: Is the backend server designed to be stateless?
+- [ ] **Superseded Work to History**: Is there a plan to move superseded work to the history folder?
+- [ ] **Specs Drive All Changes**: Does this plan originate from an approved spec?
+- [ ] **No Manual Coding**: Will the implementation be done by an agent?
 
 ## Project Structure
 

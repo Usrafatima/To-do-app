@@ -1,62 +1,16 @@
-# Research for Hackathon 2 Phase 2 Frontend
+# Frontend Implementation Research
 
-This document records the research and decisions made to resolve the "NEEDS CLARIFICATION" points in the `plan.md`.
+## Decision: Component-Based Architecture with State Hoisting
 
-## 1. Feature Specification
+**Rationale**: A standard component-based architecture will be used, as is idiomatic for React/Next.js applications. State will be managed at the highest necessary level and passed down as props to child components (`State Hoisting`). For this application, the main `TaskContainer` will manage the list of tasks and the timer state. This avoids the need for a more complex state management library (like Redux or Zustand) for a project of this scale, keeping the implementation clean and simple.
 
-**Question**: Could you please provide a link to the feature specification document for the Hackathon 2 Phase 2 Frontend?
+**Alternatives considered**:
+- **Global State Management (e.g., Context API, Zustand)**: Rejected as overly complex for the current scope. If the application were to grow significantly, this could be reconsidered.
 
-- **Decision**: The project constitution at `/.specify/memory/constitution.md` serves as the feature specification.
-- **Rationale**: The constitution was updated to a detailed design document that outlines the full-stack application, including the frontend.
-- **Alternatives considered**: None.
+## Decision: Real Authenticated API Client
 
-## 2. Testing Framework
+**Rationale**: To ensure the UI is fully functional as per the new constitution, the `src/lib/apiClient.ts` will be responsible for integrating with the *real authenticated FastAPI backend*. This client will handle sending Google ID tokens for authentication, managing JWTs for subsequent requests, and making calls to the authenticated task management endpoints. This approach ensures secure and robust communication between the frontend and the backend.
 
-**Question**: The plan suggests Jest and React Testing Library for testing. Is this the desired testing framework?
-
-- **Decision**: PENDING CONFIRMATION. Assumed to be Jest and React Testing Library.
-- **Rationale**: This is a standard and popular choice for testing React applications.
-- **Alternatives considered**:
-    - Cypress: for end-to-end testing.
-    - Playwright: for end-to-end testing.
-    - Vitest: a fast unit-testing framework.
-
-## 3. Performance Metrics
-
-**Question**: The plan mentions "Fast page loads, responsive UI". Could you please provide specific performance metrics to aim for? (e.g., Google Lighthouse scores, specific Core Web Vitals targets).
-
-- **Decision**: PENDING.
-- **Rationale**: The constitution mentions high-level performance goals, but specific metrics are needed for measurable targets.
-- **Alternatives considered**: None.
-
-## 4. Constraints
-
-**Question**: Are there any specific constraints for this project? (e.g., budget, timeline, specific technologies to avoid).
-
-- **Decision**: The main constraints are the technology stack and architecture defined in the project constitution.
-- **Rationale**: The constitution provides a clear technical framework for the project.
-- **Alternatives considered**: None.
-
-## 5. Manual Coding
-
-**Question**: The constitution states "No Manual Coding". Does this plan rely solely on AI-generated code?
-
-- **Decision**: PENDING CONFIRMATION.
-- **Rationale**: This is a process-related question that needs to be confirmed by the user/team.
-- **Alternatives considered**: None.
-
-## 6. Scope Control
-
-**Question**: The constitution mentions "Scope Control". Is the scope of this plan limited to Phase I basic features?
-
-- **Decision**: The scope is defined by the "Core Features (Basic Level)" section of the project constitution.
-- **Rationale**: The constitution clearly outlines the scope for Phase 2.
-- **Alternatives considered**: None.
-
-## 7. Evaluation Criteria
-
-**Question**: What are the evaluation criteria for this project?
-
-- **Decision**: The evaluation criteria can be inferred from the constitution's goals and specifications.
-- **Rationale**: The constitution implies criteria such as adherence to the specified architecture, implementation of all core features, and a high-quality user experience.
-- **Alternatives considered**: None.
+**Alternatives considered**:
+- **Mock Client**: Rejected as the project now requires integration with a real authenticated backend as per the updated constitution.
+- **Directly embedding API calls in components**: Rejected because it mixes concerns and makes API logic harder to manage and test. The `apiClient.ts` provides a clean abstraction layer.
