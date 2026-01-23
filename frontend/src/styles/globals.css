@@ -1,0 +1,195 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-50;
+}
+
+.task-item-enter {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+.task-item-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms, transform 300ms;
+}
+.task-item-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+.task-item-exit-active {
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: opacity 300ms, transform 300ms;
+}
+
+/* Neon Glow Animation (used for chatbot launcher) */
+@keyframes neon-pulse {
+  0%, 100% {
+    box-shadow: 0 0 5px var(--neon-blue), 0 0 10px var(--neon-cyan), 0 0 15px var(--neon-purple);
+  }
+  50% {
+    box-shadow: 0 0 15px var(--neon-blue), 0 0 25px var(--neon-cyan), 0 0 35px var(--neon-purple);
+  }
+}
+
+.animate-neon-pulse {
+  animation: neon-pulse 2s infinite alternate;
+}
+
+/* Hero Section Animations */
+@keyframes blob {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+}
+
+.animate-blob {
+  animation: blob 7s infinite cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+@keyframes pulseSlow {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulseSlow 3s infinite alternate ease-in-out;
+}
+
+/* Orbital Workflow Animations for Hero Section */
+@keyframes orbital-card {
+  0% {
+    opacity: 0;
+    transform: translate(var(--initial-x), var(--initial-y)) rotate(var(--initial-rotate)) scale(0.7);
+    box-shadow: 0 0 0px rgba(0,0,0,0);
+  }
+  10% {
+    opacity: 1;
+    transform: translate(var(--mid-x), var(--mid-y)) rotate(var(--mid-rotate)) scale(1.05);
+    box-shadow: 0 0 15px var(--neon-cyan);
+  }
+  50% { /* Hold slightly off-center before moving to 'done' position */
+    opacity: 1;
+    transform: translate(var(--target-x), var(--target-y)) rotate(var(--target-rotate)) scale(0.95);
+    box-shadow: 0 0 10px var(--neon-purple);
+  }
+  80%, 100% { /* Disappear to allow 'Done' to be prominent */
+    opacity: 0;
+    transform: translate(0, 0) scale(0);
+  }
+}
+
+@keyframes orbital-done {
+  0%, 70% { /* Stays hidden initially while others animate */
+    opacity: 0;
+    transform: translate(0, 0) scale(0.7) rotate(0deg);
+  }
+  80% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1.1) rotate(5deg);
+    box-shadow: 0 0 20px var(--neon-green), 0 0 30px var(--neon-green);
+  }
+  90% { /* Hold 'Done' state for 1-2 seconds */
+    opacity: 1;
+    transform: translate(0, 0) scale(1) rotate(0deg);
+    box-shadow: 0 0 15px var(--neon-green);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.7) rotate(-5deg);
+  }
+}
+
+.animate-orbital-card {
+  animation: orbital-card 10s infinite ease-in-out;
+  animation-fill-mode: both;
+}
+
+.animate-orbital-done {
+  animation: orbital-done 10s infinite ease-in-out;
+  animation-fill-mode: both;
+}
+
+/* Utility for animation delays */
+.animation-delay-0 { animation-delay: 0s; }
+.animation-delay-500 { animation-delay: 0.5s; }
+.animation-delay-1000 { animation-delay: 1s; }
+.animation-delay-1500 { animation-delay: 1.5s; }
+.animation-delay-2000 { animation-delay: 2s; }
+.animation-delay-3000 { animation-delay: 3s; }
+.animation-delay-4000 { animation-delay: 4s; }
+
+/* Dropdown Animation */
+@keyframes scale-in {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-scale-in {
+  animation: scale-in 0.1s ease-out forwards;
+}
+
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(31, 41, 55, 0.5); 
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(75, 85, 99, 0.8); 
+  border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(107, 114, 128, 1); 
+}
+
+:root {
+  --neon-blue: #00F;
+  --neon-cyan: #0FF;
+  --neon-purple: #F0F;
+  --neon-green: #0F0; /* New neon green for 'Done' */
+  --neon-blue-rgb: 0, 0, 255;
+  --neon-cyan-rgb: 0, 255, 255;
+  --neon-purple-rgb: 255, 0, 255;
+  --neon-green-rgb: 0, 255, 0;
+}
