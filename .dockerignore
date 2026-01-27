@@ -1,0 +1,17 @@
+node_modules/
+dist/
+build/
+*.log
+.env*
+.git/
+Dockerfile*
+.dockerignore
+coverage/
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+.DS_Store
+.idea/
+.vscode/

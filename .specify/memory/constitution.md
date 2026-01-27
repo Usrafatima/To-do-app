@@ -1,68 +1,58 @@
 <!-- 
 Sync Impact Report
-Version change: 3.0.0 → 4.0.0
-Reason: Major revision for implementing real Google authentication and backend requirements for TaskPilot.
-Modified principles: All previous frontend-focused principles replaced with new backend authentication and task management principles.
-Added sections: 
-- Primary Goal (updated for backend authentication)
-- Google Authentication Principle
-- Authenticated Task Endpoints Principle
-- Security & Best Practices Principle
-- Data Models Principle
-- Deliverables Principle
-Removed sections: All previous principles related to chatbot frontend UI.
+Version change: 4.0.0 → 5.0.0
+Reason: Transition to Phase 4 (Infrastructure). Governance focus shifts from feature development to infrastructure stability, containerization, and reproducibility. Application code is now frozen.
+Modified principles:
+- "Google Authentication" → "Principle 1: Application Code Freeze"
+- "Authenticated Task Endpoints" → "Principle 2: Infrastructure Reproducibility"
+- "Security & Best Practices" → "Principle 3: Container Isolation"
+- "Data Models" → "Principle 4: Backend Execution Standards"
+Added sections:
+- Scope (Infrastructure focus)
+Removed sections:
+- "Deliverables" (Superseded by standard phase artifacts)
+- "Restrictions" (Merged into Principles)
 Templates requiring updates:
-- ✅ .specify/templates/plan-template.md (will be updated as part of consistency propagation)
-- ✅ .specify/templates/spec-template.md (will be updated as part of consistency propagation)
-- ✅ .specify/templates/tasks-template.md (will be updated as part of consistency propagation)
-- ✅ README.md (will be updated as part of consistency propagation)
+- ✅ .specify/templates/plan-template.md (Constitution Check will align with new principles)
+- ✅ .specify/templates/spec-template.md (Requirements will align with infrastructure)
 -->
 # TaskPilot: Project Constitution
 
-**Version**: 4.0.0 | **Ratified**: 2026-01-02 | **Last Amended**: 2026-01-18
+**Version**: 5.0.0 | **Ratified**: 2026-01-02 | **Last Amended**: 2026-01-27
 
 ## 1. Project Overview
-This constitution governs the development of the TaskPilot application, focusing on the implementation of real Google authentication and the secure management of user tasks via a FastAPI backend.
+This constitution governs **Phase 4** of the TaskPilot application. The focus is strictly on establishing clean, reproducible infrastructure using Docker and Kubernetes. The application logic is considered stable and frozen; no feature development is permitted.
 
 ### Primary Goal
-To implement real Google authentication in the backend, verify Google ID tokens, manage users, and allow only authenticated users to access and modify their tasks.
+To deliver a fully containerized, reproducible, and deployable version of TaskPilot without modifying the underlying application source code.
 
 ## 2. Core Principles
 
-### Principle 1: Google Authentication
-**Rule:** Users MUST be able to log in via Google on the frontend. The frontend MUST send the Google ID token to the backend in the `Authorization: Bearer <token>` header. The backend MUST verify the token signature using Google's public keys and decode it to extract user information (Google user ID, name, email, profile picture). A new user MUST be created in the database if it is the first login.
+### Principle 1: Application Code Freeze
+**Rule:** The application source code (`frontend/src/**`, `backend/src/**`, `backend/main.py`) is **READ-ONLY**. No logical changes, bug fixes, or feature additions are permitted during this phase. Any required configuration changes must be handled via environment variables or external configuration files, not by modifying source code.
 
-### Principle 2: Authenticated Task Endpoints
-**Rule:** All task endpoints (`GET /api/{user_id}/tasks`, `POST /api/{user_id}/tasks`, `GET /api/{user_id}/tasks/{task_id}`, `PUT /api/{user_id}/tasks/{task_id}`, `DELETE /api/{user_id}/tasks/{task_id}`, `PATCH /api/{user_id}/tasks/{task_id}/toggle`) MUST only return tasks for the authenticated user and MUST verify ownership before allowing access or modification.
+### Principle 2: Infrastructure Reproducibility
+**Rule:** All infrastructure MUST be reproducible from scratch. A fresh `git clone` followed by documented build commands (e.g., `docker compose up --build`) MUST result in a fully functional environment without manual intervention or "magic" fixes. All setup steps MUST be codified (Dockerfile, helm charts, compose files).
 
-### Principle 3: Security & Best Practices
-**Rule:** Requests without a valid Google ID token MUST return `401 Unauthorized`. Users CANNOT access or modify tasks of other users. Secure database storage MUST be used for user info and tasks. Stateless authentication MUST be implemented by verifying the Google token on each request. Proper HTTP status codes for errors (401, 403, 404, 500) MUST be used.
+### Principle 3: Container Isolation
+**Rule:** Containers MUST be self-contained. All runtime dependencies (Python packages, Node modules, system libraries) MUST be installed *inside* the Docker images. The application MUST NOT rely on tools or libraries installed on the host system (other than the container runtime itself).
 
-### Principle 4: Data Models
-**Rule:** The `Users` table/model MUST store Google user ID, name, email, profile picture, and timestamps. The `Tasks` table/model MUST store task details with a reference to the user ID. All queries MUST filter by authenticated user ID.
+### Principle 4: Backend Execution Standards
+**Rule:** The backend container MUST bind to `0.0.0.0` to allow external access. It MUST use a production-ready server (e.g., `uvicorn` with appropriate workers) defined in the `CMD` or `ENTRYPOINT`. Port mappings and environment variables MUST be explicitly defined in the orchestration layer (Docker Compose / Helm).
 
-### Principle 5: Deliverables
-**Rule:** Deliverables MUST include FastAPI backend code for all task endpoints, Google token verification logic using Python libraries (e.g., `google-auth` or `Authlib`), database models for users and tasks, comments explaining authentication flow and security measures, and instructions for integrating frontend Google login with backend verification.
+## 3. Infrastructure Stack
+- **Container Engine:** Docker
+- **Orchestration:** Docker Compose (Local), Kubernetes/Helm (Production)
+- **Base Images:** Official Python (Backend), Official Node/Alpine (Frontend)
+- **Database:** PostgreSQL (Containerized for local, External for prod)
 
-## 3. Tech Stack (Fixed)
-- **Framework:** Next.js (App Router)
-- **Language:** TypeScript
-- **Styling:** Tailwind CSS
-- **API:** The existing Gemini API endpoint must be used.
+## 4. Success Criteria
+- `docker compose up` brings up the full stack (Frontend, Backend, DB) successfully.
+- Frontend can communicate with Backend via container networking.
+- Backend can connect to the Database.
+- No "works on my machine" issues; the setup is strictly defined in code.
 
-## 4. Restrictions
-- Do NOT implement any Gemini or AI logic on the frontend.
-- Do NOT change the existing API contracts.
-- Do NOT create any unused components or files.
-
-## 5. Success Criteria
-- The chatbot window opens and closes smoothly via the floating button.
-- User and bot messages render correctly in their distinct bubbles.
-- A visible loading state is displayed while waiting for the bot's response.
-- The UI is fully responsive and usable on mobile, tablet, and desktop.
-- The final component feels premium, modern, and polished.
-
-## 6. Governance
+## 5. Governance
 - **Amendment Procedure:** Amendments to this constitution require a new specification and approval.
 - **Versioning Policy:** The constitution follows semantic versioning. MAJOR changes are required for backward-incompatible governance or principle removals, MINOR for new principles or material expansions, and PATCH for clarifications or typo fixes.
 - **Compliance Review:** All specifications and implementations must be reviewed for compliance with this constitution.

@@ -1,47 +1,42 @@
-# --- Stage 1: Build ---
-FROM node:18-alpine AS builder
+# Stage 1: Builder
+FROM node:20-alpine AS builder
 
-# Set working directory
 WORKDIR /app
 
-# Install dependencies
-COPY package.json package-lock.json* ./
+# Install dependencies based on lockfile
+COPY package.json package-lock.json ./
 RUN npm ci
 
-# Copy source code
+# Copy source code and build
 COPY . .
-
-# Build the Next.js app
+# Note: In a real Next.js app, NEXT_PUBLIC_ env vars are baked in at build time.
+# To support runtime configuration, we might need a different strategy, 
+# but for now we follow the plan and standard Next.js docker pattern.
 RUN npm run build
 
-# --- Stage 2: Production image ---
-FROM node:18-alpine AS runner
+# Stage 2: Runner
+FROM node:20-alpine AS runner
 
-# Set working directory
 WORKDIR /app
 
-# Create a non-root user for security
+ENV NODE_ENV production
+# Disable Next.js telemetry
+ENV NEXT_TELEMETRY_DISABLED 1
+
+# Create a non-root user
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
 # Copy necessary files from builder
-COPY --from=builder /app/package.json ./
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Correct ENV syntax to avoid warnings
-ENV NODE_ENV=production
-ENV PORT=3000
-
-# Change ownership to non-root user
-RUN chown -R nextjs:nodejs /app
-
-# Switch to non-root user
 USER nextjs
 
-# Expose port
 EXPOSE 3000
 
-# Start the app
+ENV PORT 3000
+ENV HOSTNAME "0.0.0.0"
+
 CMD ["node", "server.js"]
