@@ -27,3 +27,16 @@ Thumbs.db
 *.log
 
 .venv2/
+
+# Kubernetes
+*.secret.yaml
+secrets/
+.kube/
+kubeconfig*
+*.key
+*.crt
+.env
+.env.local
+.env.production
+.env
+k8s/*.yaml 

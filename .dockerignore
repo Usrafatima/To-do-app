@@ -15,3 +15,11 @@ venv/
 .DS_Store
 .idea/
 .vscode/
+
+# Kubernetes
+*.secret.yaml
+secrets/
+.kube/
+kubeconfig*
+*.key
+*.crt

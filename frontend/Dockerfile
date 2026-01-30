@@ -9,6 +9,15 @@ RUN npm ci
 
 # Copy source code and build
 COPY . .
+
+# Accept build arguments for public env vars
+ARG NEXT_PUBLIC_GOOGLE_CLIENT_ID
+ARG NEXT_PUBLIC_API_BASE_URL
+
+# Set them as environment variables during build
+ENV NEXT_PUBLIC_GOOGLE_CLIENT_ID=$NEXT_PUBLIC_GOOGLE_CLIENT_ID
+ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
+
 # Note: In a real Next.js app, NEXT_PUBLIC_ env vars are baked in at build time.
 # To support runtime configuration, we might need a different strategy, 
 # but for now we follow the plan and standard Next.js docker pattern.
@@ -22,6 +31,9 @@ WORKDIR /app
 ENV NODE_ENV production
 # Disable Next.js telemetry
 ENV NEXT_TELEMETRY_DISABLED 1
+
+# Install wget for healthcheck
+RUN apk add --no-cache wget
 
 # Create a non-root user
 RUN addgroup --system --gid 1001 nodejs

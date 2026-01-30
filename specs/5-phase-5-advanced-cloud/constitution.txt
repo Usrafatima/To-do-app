@@ -1,0 +1,43 @@
+TASKPILOT PROJECT CONSTITUTION - PHASE 5: ADVANCED CLOUD DEPLOYMENT
+Version: 1.0.0
+Status: ACTIVE
+
+1. PURPOSE
+The objective of Phase 5 is the evolution of TaskPilot from a containerized monolith into a resilient, distributed, and event-driven microservices architecture. This phase focuses on cloud-native patterns, specifically leveraging Kubernetes orchestration, Dapr for distributed systems building blocks, and Kafka for asynchronous messaging.
+
+2. ALLOWED CHANGES
+Unlike Phase 4, Phase 5 explicitly allows and requires application-level modifications to facilitate the transition to microservices. This includes refactoring the FastAPI backend, updating the Next.js frontend for service discovery, and introducing new services to handle specific domains.
+
+3. ARCHITECTURAL REQUIREMENTS
+3.1. Microservices Architecture: The application must be decomposed into at least two functional microservices (e.g., Task Service and Notification/Analytics Service).
+3.2. Dapr Integration: Usage of the Distributed Application Runtime (Dapr) is mandatory. Services must utilize Dapr sidecars for:
+- State Management (storing task data).
+- Pub/Sub (event distribution via Kafka).
+- Service-to-Service Invocation.
+- Cron Jobs or Scheduled Tasks.
+3.3. Event-Driven Backbone: A Kafka or Kafka-compatible message broker (e.g., Redpanda) must be used as the primary pub/sub component for inter-service communication.
+
+4. NON-NEGOTIABLE PRINCIPLES
+4.1. AI-Assisted Implementation: All code and configuration must be generated through AI assistance via the Specify+ workflow. Manual "vibe coding" or undocumented manual overrides are strictly prohibited.
+4.2. Specify+ Workflow Adherence: No implementation may begin without a completed and approved Specification, Technical Plan, and Task List.
+4.3. Infrastructure as Code: All Kubernetes resources must be defined in declarative manifests or Helm charts.
+4.4. Decoupling: Services must remain stateless where possible, relying on Dapr components for state and communication to ensure cloud portability.
+
+5. EXECUTION STAGES
+Phase 5 must proceed through the following lifecycle:
+1. Constitution (Current)
+2. Specification (Defining service boundaries and event schemas)
+3. Plan (Mapping Dapr components and K8s resources)
+4. Tasks (Atomic implementation steps)
+5. Implement (AI-driven execution)
+
+6. COMPLETION AND JUDGING CRITERIA
+A successful Phase 5 delivery must meet the following verifiable benchmarks:
+6.1. Local Validation: The entire stack must run on Minikube with all Dapr sidecars injected and healthy.
+6.2. Cloud Deployment: The system must be deployed to a production-grade managed Kubernetes service (e.g., EKS, GKE, LKE).
+6.3. Public Accessibility: The frontend must be reachable via a public URL with a valid LoadBalancer or Ingress configuration.
+6.4. Event Verification: Implementation must demonstrate a verifiable Kafka flow where an action in one service triggers a reactive event in another service.
+6.5. Dapr Observability: Dapr sidecar health and component status (State Store, Pub/Sub) must be verifiable via CLI or Dashboard.
+
+7. GOVERNANCE
+Any deviation from this constitution requires a formal amendment and re-ratification. The judge holds the right to reject implementations that bypass the event-driven requirements or fail to utilize Dapr components as the primary abstraction layer.
