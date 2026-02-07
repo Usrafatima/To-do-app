@@ -485,12 +485,12 @@ function DashboardContent() {
                 />
               </div>
 
-              <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 w-full md:w-auto no-scrollbar ml-0 md:ml-2">
-                <div className="relative flex-shrink-0">
+              <div className="flex flex-wrap items-center gap-2 w-full md:w-auto ml-0 md:ml-2">
+                <div className="relative w-full sm:w-auto">
                   <select
                     value={filterStatus}
                     onChange={(e) => setFilterStatus(e.target.value as any)}
-                    className="appearance-none bg-gray-800/60 backdrop-blur-sm border border-gray-700/50 text-gray-300 text-xs font-medium py-2 pl-3 pr-8 rounded-full hover:bg-gray-700/80 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
+                    className="w-full appearance-none bg-gray-800/60 backdrop-blur-sm border border-gray-700/50 text-gray-300 text-xs font-medium py-2 pl-3 pr-8 rounded-full hover:bg-gray-700/80 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
                   >
                     <option value="all">All Status</option>
                     <option value="pending">Pending</option>
@@ -499,11 +499,11 @@ function DashboardContent() {
                   <FiChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" size={12} />
                 </div>
 
-                <div className="relative flex-shrink-0">
+                <div className="relative w-full sm:w-auto">
                   <select
                     value={filterPriority}
                     onChange={(e) => setFilterPriority(e.target.value as any)}
-                    className="appearance-none bg-gray-800/60 backdrop-blur-sm border border-gray-700/50 text-gray-300 text-xs font-medium py-2 pl-3 pr-8 rounded-full hover:bg-gray-700/80 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
+                    className="w-full appearance-none bg-gray-800/60 backdrop-blur-sm border border-gray-700/50 text-gray-300 text-xs font-medium py-2 pl-3 pr-8 rounded-full hover:bg-gray-700/80 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
                   >
                     <option value="all">All Priorities</option>
                     <option value="High">High</option>
@@ -513,11 +513,11 @@ function DashboardContent() {
                   <FiChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" size={12} />
                 </div>
 
-                <div className="relative flex-shrink-0">
+                <div className="relative w-full sm:w-auto">
                   <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value as any)}
-                    className="appearance-none bg-gray-800/60 backdrop-blur-sm border border-gray-700/50 text-gray-300 text-xs font-medium py-2 pl-3 pr-8 rounded-full hover:bg-gray-700/80 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
+                    className="w-full appearance-none bg-gray-800/60 backdrop-blur-sm border border-gray-700/50 text-gray-300 text-xs font-medium py-2 pl-3 pr-8 rounded-full hover:bg-gray-700/80 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
                   >
                     <option value="dueDate">Sort: Date</option>
                     <option value="priority">Sort: Priority</option>
@@ -526,7 +526,7 @@ function DashboardContent() {
                   <FiChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" size={12} />
                 </div>
 
-                <span className="text-gray-200 text-xs font-medium whitespace-nowrap ml-2">
+                <span className="text-gray-200 text-xs font-medium whitespace-nowrap ml-2 w-full sm:w-auto text-center sm:text-left mt-2 sm:mt-0">
                   {pendingCount} {pendingCount === 1 ? 'task' : 'tasks'} remaining
                 </span>
               </div>

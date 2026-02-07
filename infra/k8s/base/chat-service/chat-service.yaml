@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chat-service
+  namespace: taskpilot
+  labels:
+    app: chat-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: chat-service
+  template:
+    metadata:
+      labels:
+        app: chat-service
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "chat-service"
+        dapr.io/app-port: "8000"
+        dapr.io/log-level: "info"
+    spec:
+      containers:
+      - name: chat-service
+        image: chat-service:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8000
+        env:
+        - name: PORT
+          value: "8000"
+        - name: OPENAI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: secrets
+              key: openai-api-key
+              optional: true
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: chat-service
+  namespace: taskpilot
+spec:
+  selector:
+    app: chat-service
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8000
+  type: ClusterIP

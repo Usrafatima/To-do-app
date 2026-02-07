@@ -1,0 +1,13 @@
+fastapi
+uvicorn
+sqlmodel
+psycopg2-binary
+python-jose[cryptography]
+passlib[bcrypt]
+bcrypt==4.0.1
+python-multipart
+pydantic-settings
+python-dotenv
+google-auth
+requests
+dapr==1.14.0

@@ -1,0 +1,14 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- namespace.yaml
+- redpanda.yaml
+- task-api/task-service.yaml
+- audit-service/audit-service.yaml
+- reminder-service/reminder-service.yaml
+- recurring-service/recurring-service.yaml
+- auth-service/auth-service.yaml
+- chat-service/chat-service.yaml
+- frontend/frontend.yaml
+- ingress.yaml

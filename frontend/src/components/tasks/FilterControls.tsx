@@ -23,10 +23,10 @@ export default function FilterControls({ onSearch, onFilterByStatus, onFilterByP
         />
       </div>
 
-      <div className="flex items-center space-x-4">
+      <div className="flex flex-col md:flex-row gap-2 w-full md:w-auto">
         <select
           onChange={(e) => onFilterByStatus(e.target.value as 'all' | 'completed' | 'incomplete')}
-          className="bg-gray-800 border border-gray-700 rounded-md pl-3 pr-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full md:w-auto bg-gray-800 border border-gray-700 rounded-md pl-3 pr-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value="all">All Status</option>
           <option value="completed">Completed</option>
@@ -35,7 +35,7 @@ export default function FilterControls({ onSearch, onFilterByStatus, onFilterByP
 
         <select
           onChange={(e) => onFilterByPriority(e.target.value as 'all' | 'High' | 'Medium' | 'Low')}
-          className="bg-gray-800 border border-gray-700 rounded-md pl-3 pr-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full md:w-auto bg-gray-800 border border-gray-700 rounded-md pl-3 pr-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value="all">All Priorities</option>
           <option value="High">High</option>
@@ -45,7 +45,7 @@ export default function FilterControls({ onSearch, onFilterByStatus, onFilterByP
 
         <select
           onChange={(e) => onSort(e.target.value as 'dueDate' | 'priority' | 'alphabetical')}
-          className="bg-gray-800 border border-gray-700 rounded-md pl-3 pr-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full md:w-auto bg-gray-800 border border-gray-700 rounded-md pl-3 pr-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value="dueDate">Sort by Due Date</option>
           <option value="priority">Sort by Priority</option>

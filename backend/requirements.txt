@@ -12,3 +12,5 @@ huggingface_hub
 pytest
 google-auth
 requests
+dapr==1.14.0
+dapr-ext-fastapi==1.14.0

@@ -4,11 +4,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { FiLogIn, FiLock, FiMail } from "react-icons/fi";
-import { FaGoogle, FaGithub } from "react-icons/fa";
 import { toast } from 'react-hot-toast';
-import { loginUser, googleLogin } from "../../lib/apiClient";
-import { GoogleLogin } from '@react-oauth/google';
+import { loginUser } from "../../lib/apiClient";
 import { useAuth } from "@/contexts/AuthContext";
+import GoogleSignInButton from "../../components/auth/GoogleSignInButton";
 
 export default function LoginPage() {
   const { login } = useAuth();
@@ -31,25 +30,6 @@ export default function LoginPage() {
       console.error("Login failed:", error);
       const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
       toast.error(errorMessage, { id: 'login' });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleGoogleLoginSuccess = async (tokenResponse: any) => {
-    console.log("Google token response:", tokenResponse);
-    setLoading(true);
-    toast.loading('Signing in with Google...', { id: 'google-login' });
-    try {
-      const idToken = tokenResponse.credential;
-      const data = await googleLogin(idToken);
-      login(data.user);
-      toast.success('Signed in successfully', { id: 'google-login' });
-      router.push("/dashboard");
-    } catch (error) {
-      console.error("Google login failed:", error);
-      const errorMessage = error instanceof Error ? error.message : "An unknown error occurred during Google login.";
-      toast.error(errorMessage, { id: 'google-login' });
     } finally {
       setLoading(false);
     }
@@ -113,17 +93,7 @@ export default function LoginPage() {
           </div>
 
           <div className="grid grid-cols-1 gap-4">
-            <GoogleLogin
-              onSuccess={handleGoogleLoginSuccess}
-              onError={() => {
-                console.error('Google Login Failed');
-                toast.error('Google login failed. Please try again.', { id: 'google-login' });
-              }}
-              theme="outline"
-              size="large"
-              shape="rectangular"
-              width="100%"
-            />
+            <GoogleSignInButton text="signin_with" />
           </div>
           
           <p className="mt-8 text-center text-sm text-gray-400">

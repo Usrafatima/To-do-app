@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: recurring-service
+  namespace: taskpilot
+  labels:
+    app: recurring-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: recurring-service
+  template:
+    metadata:
+      labels:
+        app: recurring-service
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "recurring-service"
+        dapr.io/app-port: "8000"
+        dapr.io/log-level: "info"
+    spec:
+      containers:
+      - name: recurring-service
+        image: recurring-service:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8000
+        env:
+        - name: PORT
+          value: "8000"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: recurring-service
+  namespace: taskpilot
+spec:
+  selector:
+    app: recurring-service
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8000
+  type: ClusterIP

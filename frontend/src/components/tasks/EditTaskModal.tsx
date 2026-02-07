@@ -15,7 +15,7 @@ export default function EditTaskModal({ task, onUpdateTask, onClose }: EditTaskM
   const [priority, setPriority] = useState<Task['priority']>(task.priority);
   const [tags, setTags] = useState(task.tags?.join(", ") || "");
   const [recurrence, setRecurrence] = useState<'daily' | 'weekly' | 'monthly' | ''>(task.recurrence?.type || '');
-  const [due_date, setDueDate] = useState(task.due_date || task.dueDate || "");
+  const [dueDate, setDueDate] = useState(task.dueDate || "");
   const [isClosing, setIsClosing] = useState(false);
 
   const handleSave = () => {
@@ -27,8 +27,7 @@ export default function EditTaskModal({ task, onUpdateTask, onClose }: EditTaskM
       priority, 
       tags: updatedTags, 
       recurrence: updatedRecurrence, 
-      due_date: due_date || undefined,
-      dueDate: due_date
+      dueDate: dueDate
     });
     handleClose();
   };
@@ -72,7 +71,7 @@ export default function EditTaskModal({ task, onUpdateTask, onClose }: EditTaskM
             <input
               id="due-date"
               type="datetime-local"
-              value={due_date}
+              value={dueDate}
               onChange={(e) => setDueDate(e.target.value)}
               className="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             />

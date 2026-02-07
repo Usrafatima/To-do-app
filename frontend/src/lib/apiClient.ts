@@ -1,26 +1,27 @@
 // Define an interface for the Task as returned/expected by the backend API
 export interface BackendTask {
-  id: number; // Backend expects number for ID
+  id: string; // Updated to string for UUID
   text: string;
   description?: string;
   is_completed: boolean;
-  priority?: string; // Backend stores as string
-  due_date?: string; // Backend uses due_date
-  tags?: string[]; // Backend expects string array
-  recurrence?: { [key: string]: any } | null; // Backend expects dict
+  priority: string;
+  category: string;
+  due_date?: string;
+  tags: string[];
+  created_at: string;
+  updated_at: string;
 }
 
-// Frontend-specific Task interface (kept for dashboard usage)
+// Frontend-specific Task interface
 export interface Task {
-  id: string; // Frontend uses string for ID
+  id: string;
   text: string;
   description?: string;
   is_completed: boolean;
-  priority: 'High' | 'Medium' | 'Low'; // Frontend uses enum
-  category: 'Work' | 'Personal' | 'Study' | 'Health'; // Frontend only
-  dueDate: string; // Frontend uses dueDate
-  due_date?: string; // Optional field for backend compatibility
-  isRecurring: boolean; // Frontend only
+  priority: 'High' | 'Medium' | 'Low';
+  category: string;
+  dueDate: string;
+  isRecurring: boolean;
   recurrence?: {
     type: 'daily' | 'weekly' | 'monthly' | '';
   };
@@ -28,6 +29,7 @@ export interface Task {
 }
 
 export interface User {
+  id: string;
   name: string;
   email: string;
   profile_picture_url: string;
@@ -39,11 +41,8 @@ export interface AuthResponse {
   user: User;
 }
 
+const API_BASE_URL = "/api/proxy";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
-
-// --- Token Management ---
-// We will keep these functions here as they might be used later for re-enabling auth
 export const getToken = (): string | null => {
   if (typeof window !== 'undefined') {
     return localStorage.getItem('access_token');
@@ -72,7 +71,6 @@ export class ApiError extends Error {
   }
 }
 
-// --- Authenticated Fetcher (will be used without a token for now) ---
 const generalFetcher = async (url: string, options: RequestInit = {}): Promise<any> => {
   const token = getToken();
   const headers: Record<string, string> = {
@@ -80,7 +78,6 @@ const generalFetcher = async (url: string, options: RequestInit = {}): Promise<a
     'Content-Type': 'application/json',
   };
 
-  // Only add Authorization header if a token exists
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
   }
@@ -88,45 +85,41 @@ const generalFetcher = async (url: string, options: RequestInit = {}): Promise<a
   const response = await fetch(`${API_BASE_URL}${url}`, {
     ...options,
     headers,
-    cache: 'no-store', // Ensure we always fetch fresh data
+    cache: 'no-store',
   });
 
   if (!response.ok) {
-    const errorData = await response.json();
+    const errorData = await response.json().catch(() => ({ detail: 'Unknown error' }));
     throw new ApiError(errorData.detail || 'Something went wrong', response.status);
   }
 
-  // Handle cases where response might be empty (e.g., DELETE requests)
-  if (response.status === 204) { // No Content
+  if (response.status === 204) {
     return null;
   }
   return response.json();
 };
 
 const authFetcher = async (url: string, options: RequestInit = {}): Promise<any> => {
-    const headers = {
-        ...options.headers,
-        'Content-Type': 'application/x-www-form-urlencoded',
-      };
-    
-      const response = await fetch(`${API_BASE_URL}${url}`, {
-        ...options,
-        headers,
-      });
-    
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new ApiError(errorData.detail || 'Something went wrong', response.status);
-      }
-    
-      return response.json();
-}
+  const response = await fetch(`${API_BASE_URL}${url}`, {
+    ...options,
+    cache: 'no-store',
+  });
 
-// --- Authentication Functions (will not be used for now but kept for later) ---
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({ detail: 'Unknown error' }));
+    throw new ApiError(errorData.detail || 'Something went wrong', response.status);
+  }
+
+  return response.json();
+};
+
 export const loginUser = async (email: string, password: string): Promise<AuthResponse> => {
   const formBody = new URLSearchParams({ username: email, password: password });
   const data = await authFetcher("/auth/login", {
     method: "POST",
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
     body: formBody.toString(),
   });
   if (data.access_token) {
@@ -136,13 +129,16 @@ export const loginUser = async (email: string, password: string): Promise<AuthRe
 };
 
 export const signupUser = async (email: string, password: string): Promise<any> => {
-    const formBody = new URLSearchParams({ username: email, password: password });
-    const data = await authFetcher("/auth/signup", {
-      method: "POST",
-      body: formBody.toString(),
-    });
-    return data;
-  };
+  const formBody = new URLSearchParams({ username: email, password: password });
+  const data = await authFetcher("/auth/signup", {
+    method: "POST",
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: formBody.toString(),
+  });
+  return data;
+};
 
 export const googleLogin = async (idToken: string): Promise<AuthResponse> => {
   const data = await generalFetcher("/auth/google", {
@@ -161,35 +157,32 @@ export const getCurrentUser = async (): Promise<User> => {
 
 export const logoutUser = (): void => {
   removeToken();
-  // Optionally, you could make an API call to invalidate the token on the backend
 };
 
-// --- Task API Calls (now using generalFetcher) ---
 export const getTasks = async (): Promise<Task[]> => {
   const backendTasks: BackendTask[] = await generalFetcher("/tasks");
-  // Map backend Task to frontend Task
   return backendTasks.map(bt => ({
-    id: String(bt.id),
+    id: bt.id,
     text: bt.text,
     description: bt.description,
     is_completed: bt.is_completed,
-    priority: (bt.priority || 'Medium') as Task['priority'], // Default or convert if needed
-    category: 'Work', // Default, as backend doesn't have it
-    dueDate: bt.due_date || '', // Use backend due_date
-    isRecurring: bt.recurrence ? true : false, // Infer from recurrence field
+    priority: (bt.priority || 'Medium') as Task['priority'],
+    category: bt.category || 'Work',
+    dueDate: bt.due_date || '',
+    isRecurring: false,
     tags: bt.tags || [],
   }));
 };
 
 export const addTask = async (task: Omit<Task, 'id'>): Promise<Task> => {
-  const backendTaskPayload: Omit<BackendTask, 'id'> = {
+  const backendTaskPayload = {
     text: task.text,
     description: task.description,
     is_completed: task.is_completed,
     priority: task.priority,
+    category: task.category,
     due_date: task.dueDate,
     tags: task.tags,
-    recurrence: task.isRecurring ? { type: 'weekly' } : undefined, // Example
   };
   const addedBackendTask: BackendTask = await generalFetcher("/tasks", {
     method: "POST",
@@ -197,42 +190,41 @@ export const addTask = async (task: Omit<Task, 'id'>): Promise<Task> => {
   });
   return {
     ...task,
-    id: String(addedBackendTask.id),
-    is_completed: addedBackendTask.is_completed, // Use backend status
+    id: addedBackendTask.id,
     dueDate: addedBackendTask.due_date || task.dueDate,
+    category: addedBackendTask.category,
   };
 };
 
 export const updateTask = async (id: string, updates: Partial<Task>): Promise<Task> => {
-  const backendUpdatePayload: Partial<BackendTask> = {
+  const backendUpdatePayload = {
     text: updates.text,
     description: updates.description,
     is_completed: updates.is_completed,
     priority: updates.priority,
+    category: updates.category,
     due_date: updates.dueDate,
     tags: updates.tags,
-    recurrence: updates.isRecurring !== undefined ? (updates.isRecurring ? { type: 'weekly' } : null) : undefined,
   };
-  const updatedBackendTask: BackendTask = await generalFetcher(`/tasks/${Number(id)}`, { // Convert id to number
+  const updatedBackendTask: BackendTask = await generalFetcher(`/tasks/${id}`, { 
     method: "PUT",
     body: JSON.stringify(backendUpdatePayload),
   });
-  // Map back to frontend Task
   return {
-    id: String(updatedBackendTask.id),
+    id: updatedBackendTask.id,
     text: updatedBackendTask.text,
     description: updatedBackendTask.description,
     is_completed: updatedBackendTask.is_completed,
     priority: (updatedBackendTask.priority || 'Medium') as Task['priority'],
-    category: updates.category || 'Work', // Retain frontend category if not updated
+    category: updatedBackendTask.category,
     dueDate: updatedBackendTask.due_date || '',
-    isRecurring: updatedBackendTask.recurrence ? true : false,
+    isRecurring: false,
     tags: updatedBackendTask.tags || [],
   };
 };
 
 export const deleteTask = async (id: string): Promise<void> => {
-  return generalFetcher(`/tasks/${Number(id)}`, { // Convert id to number
+  return generalFetcher(`/tasks/${id}`, { 
     method: "DELETE",
   });
 };
@@ -241,7 +233,6 @@ export const completeTask = async (id: string, is_completed: boolean): Promise<T
   return updateTask(id, { is_completed });
 };
 
-// --- Chat API Calls ---
 export interface ChatMessage {
     message: string;
     conversation_id?: string;
@@ -253,7 +244,7 @@ export interface ChatResponse {
 }
 
 export const sendChatMessage = async (data: ChatMessage): Promise<ChatResponse> => {
-    return generalFetcher("/api/v1/chat/", {
+    return generalFetcher("/api/v1/chat", {
         method: "POST",
         body: JSON.stringify(data),
     });

@@ -12,8 +12,6 @@ from .models import Task
 
 
 def create_db_and_tables():
-    logging.warning("Dropping and recreating all tables. All data will be lost.")
-    SQLModel.metadata.drop_all(engine)
     SQLModel.metadata.create_all(engine)
 
 

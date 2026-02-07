@@ -59,7 +59,7 @@ export default function TaskContainer({ refetchTrigger }: TaskContainerProps) {
 
       if (updatedTask.is_completed && updatedTask.recurrence) {
         const { recurrence, id: _, ...originalTask } = updatedTask;
-        const new_due_date = new Date(originalTask.due_date || new Date());
+        const new_due_date = new Date(originalTask.dueDate || new Date());
         if (recurrence.type === 'daily') {
           new_due_date.setDate(new_due_date.getDate() + 1);
         } else if (recurrence.type === 'weekly') {
@@ -71,7 +71,6 @@ export default function TaskContainer({ refetchTrigger }: TaskContainerProps) {
         const newTask = await addTask({
           ...originalTask,
           is_completed: false,
-          due_date: new_due_date.toISOString(),
           dueDate: new_due_date.toISOString()
         });
         setTasks(prevTasks => [...prevTasks, newTask]);

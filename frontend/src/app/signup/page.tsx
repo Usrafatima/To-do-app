@@ -1,12 +1,12 @@
-
 "use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { FiUser, FiMail, FiLock, FiLogIn } from "react-icons/fi";
-import { FaGoogle, FaGithub } from "react-icons/fa";
+import { FaGithub } from "react-icons/fa";
 import { Toaster, toast } from 'react-hot-toast';
+import GoogleSignInButton from "../../components/auth/GoogleSignInButton";
 
 // This is a placeholder for the actual signup function
 const signup = async (firstName: string, lastName: string, email: string, password: string) => {
@@ -127,11 +127,11 @@ export default function SignupPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <button className="w-full flex items-center justify-center py-2 px-4 border border-gray-600 rounded-md shadow-sm text-sm font-medium text-white hover:bg-gray-700">
-              <FaGoogle className="mr-2" /> Google
-            </button>
-            <button className="w-full flex items-center justify-center py-2 px-4 border border-gray-600 rounded-md shadow-sm text-sm font-medium text-white hover:bg-gray-700">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
+            <div className="w-full">
+              <GoogleSignInButton text="signup_with" />
+            </div>
+            <button className="w-full flex items-center justify-center py-2 px-4 border border-gray-600 rounded-md shadow-sm text-sm font-medium text-white hover:bg-gray-700 h-[40px]">
               <FaGithub className="mr-2" /> GitHub
             </button>
           </div>

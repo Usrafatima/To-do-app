@@ -40,6 +40,7 @@ The UI design philosophy is modern, clean, and professional.
 - **TypeScript**: Follow standard community conventions.
 
 ## 7. Recent Changes
+- **5-phase-5-advanced-cloud**: Implementation of event-driven microservices (Task, Audit, Reminder, Recurring), Dapr integration, and Kubernetes infrastructure.
 - **2-phase-2-frontend**: Scaffolding the frontend plan and artifacts.
 - **1-fullstack-webapp**: Initial setup of the full-stack project structure and constitution.
 - **1-todo-cli-app**: Initial CLI application in Python.

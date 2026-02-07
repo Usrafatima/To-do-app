@@ -14,13 +14,13 @@
 
 **Purpose**: Project initialization and basic Kubernetes/Dapr structure
 
-- [ ] T001 Create Kubernetes namespace `taskpilot` in `infra/k8s/base/namespace.yaml`
-- [ ] T002 Install Dapr control plane on Kubernetes cluster (Minikube/Cloud)
-- [ ] T003 Deploy Kafka-compatible broker (Redpanda) in `infra/k8s/base/redpanda.yaml`
-- [ ] T004 Configure Dapr Global settings (tracing, logging) in `infra/dapr/config.yaml`
-- [ ] T005 Create Kafka topics (`tasks.lifecycle`, `reminders.lifecycle`, `recurring.lifecycle`, `audit.events`)
-- [ ] T006 Configure Dapr Pub/Sub component for Kafka in `infra/dapr/pubsub-kafka.yaml`
-- [ ] T007 Configure Dapr State Store components (tasks, reminders, recurring, audit) in `infra/dapr/statestore.yaml`
+- [x] T001 Create Kubernetes namespace `taskpilot` in `infra/k8s/base/namespace.yaml`
+- [x] T002 Install Dapr control plane on Kubernetes cluster (Minikube/Cloud)
+- [x] T003 Deploy Kafka-compatible broker (Redpanda) in `infra/k8s/base/redpanda.yaml`
+- [x] T004 Configure Dapr Global settings (tracing, logging) in `infra/dapr/config.yaml`
+- [x] T005 Create Kafka topics (`tasks.lifecycle`, `reminders.lifecycle`, `recurring.lifecycle`, `audit.events`)
+- [x] T006 Configure Dapr Pub/Sub component for Kafka in `infra/dapr/pubsub-kafka.yaml`
+- [x] T007 Configure Dapr State Store components (tasks, reminders, recurring, audit) in `infra/dapr/statestore.yaml`
 
 ---
 
@@ -28,11 +28,11 @@
 
 **Purpose**: Core microservices structure that MUST be complete before user story implementation
 
-- [ ] T008 [P] Define Event Schemas for Kafka topics in `docs/events.md`
-- [ ] T009 [P] Initialize `backend/task-service` FastAPI structure with Dapr SDK
-- [ ] T010 [P] Initialize `backend/audit-service` FastAPI structure with Dapr SDK
-- [ ] T011 [P] Initialize `backend/reminder-service` FastAPI structure with Dapr SDK
-- [ ] T012 [P] Initialize `backend/recurring-service` FastAPI structure with Dapr SDK
+- [x] T008 [P] Define Event Schemas for Kafka topics in `docs/events.md`
+- [x] T009 [P] Initialize `backend/task-service` FastAPI structure with Dapr SDK
+- [x] T010 [P] Initialize `backend/audit-service` FastAPI structure with Dapr SDK
+- [x] T011 [P] Initialize `backend/reminder-service` FastAPI structure with Dapr SDK
+- [x] T012 [P] Initialize `backend/recurring-service` FastAPI structure with Dapr SDK
 
 **Checkpoint**: Foundation ready - microservices implementation can now begin
 
@@ -46,13 +46,13 @@
 
 ### Implementation for User Story 1
 
-- [ ] T013 [US1] Implement Task model with Dapr state store integration in `backend/task-service/src/models/task.py`
-- [ ] T014 [US1] Implement Task API endpoints (POST, PUT, GET) in `backend/task-service/src/api/tasks.py`
-- [ ] T015 [US1] Implement `TaskCreated` and `TaskCompleted` event publication in `backend/task-service/src/services/event_publisher.py`
-- [ ] T016 [US1] Implement Audit Service consumer for Task lifecycle events in `backend/audit-service/src/services/event_handler.py`
-- [ ] T017 [US1] Implement Activity record storage in Audit Service using Dapr state store in `backend/audit-service/src/models/activity.py`
-- [ ] T018 [US1] Create Kubernetes Deployment and Service for Task API in `infra/k8s/base/task-api/`
-- [ ] T019 [US1] Create Kubernetes Deployment and Service for Audit Service in `infra/k8s/base/audit-service/`
+- [x] T013 [US1] Implement Task model with Dapr state store integration in `backend/task-service/src/models/task.py`
+- [x] T014 [US1] Implement Task API endpoints (POST, PUT, GET) in `backend/task-service/src/api/tasks.py`
+- [x] T015 [US1] Implement `TaskCreated` and `TaskCompleted` event publication in `backend/task-service/src/services/event_publisher.py`
+- [x] T016 [US1] Implement Audit Service consumer for Task lifecycle events in `backend/audit-service/src/services/event_handler.py`
+- [x] T017 [US1] Implement Activity record storage in Audit Service using Dapr state store in `backend/audit-service/src/models/activity.py`
+- [x] T018 [US1] Create Kubernetes Deployment and Service for Task API in `infra/k8s/base/task-api/`
+- [x] T019 [US1] Create Kubernetes Deployment and Service for Audit Service in `infra/k8s/base/audit-service/`
 
 **Checkpoint**: User Story 1 functional - tasks are persisted and audited asynchronously.
 
@@ -66,13 +66,13 @@
 
 ### Implementation for User Story 2
 
-- [ ] T020 [US2] Implement Reminder model and Dapr Timer/Job logic in `backend/reminder-service/src/models/reminder.py`
-- [ ] T021 [US2] Implement Reminder Service event handler to subscribe to `TaskCreated` in `backend/reminder-service/src/services/event_handler.py`
-- [ ] T022 [US2] Implement `ReminderTriggered` event publication in `backend/reminder-service/src/services/event_publisher.py`
-- [ ] T023 [US2] Implement Recurring Task model and schedule logic in `backend/recurring-service/src/models/recurring.py`
-- [ ] T024 [US2] Implement Recurring Task generator logic (Dapr Cron binding) in `backend/recurring-service/src/services/task_generator.py`
-- [ ] T025 [US2] Create Kubernetes Deployment for Reminder Service in `infra/k8s/base/reminder-service/`
-- [ ] T026 [US2] Create Kubernetes Deployment for Recurring Task Service in `infra/k8s/base/recurring-service/`
+- [x] T020 [US2] Implement Reminder model and Dapr Timer/Job logic in `backend/reminder-service/src/models/reminder.py`
+- [x] T021 [US2] Implement Reminder Service event handler to subscribe to `TaskCreated` in `backend/reminder-service/src/services/event_handler.py`
+- [x] T022 [US2] Implement `ReminderTriggered` event publication in `backend/reminder-service/src/services/event_publisher.py`
+- [x] T023 [US2] Implement Recurring Task model and schedule logic in `backend/recurring-service/src/models/recurring.py`
+- [x] T024 [US2] Implement Recurring Task generator logic (Dapr Cron binding) in `backend/recurring-service/src/services/task_generator.py`
+- [x] T025 [US2] Create Kubernetes Deployment for Reminder Service in `infra/k8s/base/reminder-service/`
+- [x] T026 [US2] Create Kubernetes Deployment for Recurring Task Service in `infra/k8s/base/recurring-service/`
 
 **Checkpoint**: User Story 2 functional - reminders and recurring tasks are automated.
 
@@ -86,9 +86,9 @@
 
 ### Implementation for User Story 3
 
-- [ ] T027 [US3] Implement Activity Timeline retrieval API in Audit Service `backend/audit-service/src/api/timeline.py`
-- [ ] T028 [US3] Verify Kafka event durability by simulating Audit Service downtime on Minikube
-- [ ] T029 [US3] Add deduplication logic to Audit Service event handler to handle potential duplicate Kafka messages
+- [x] T027 [US3] Implement Activity Timeline retrieval API in Audit Service `backend/audit-service/src/api/timeline.py`
+- [x] T028 [US3] Verify Kafka event durability by simulating Audit Service downtime on Minikube
+- [x] T029 [US3] Add deduplication logic to Audit Service event handler to handle potential duplicate Kafka messages
 
 **Checkpoint**: User Story 3 functional - audit log is resilient and accessible.
 
@@ -98,13 +98,13 @@
 
 **Purpose**: Frontend integration, cloud deployment, and final validation.
 
-- [ ] T030 [P] Configure Dapr Service Invocation between Frontend and Task API in `frontend/src/lib/apiClient.ts`
-- [ ] T031 [P] Create Kubernetes Deployment and Service for Frontend in `infra/k8s/base/frontend/`
-- [ ] T032 Configure Kubernetes Ingress for public frontend access in `infra/k8s/base/ingress.yaml`
-- [ ] T033 Create Kustomize overlays for Minikube and Cloud in `infra/k8s/overlays/`
-- [ ] T034 Set up GitHub Actions workflow for automated Cloud K8s deployment in `.github/workflows/deploy.yaml`
-- [ ] T035 [P] Implement health check endpoints in all backend services for Kubernetes Liveness/Readiness probes
-- [ ] T036 Final end-to-end validation on Cloud cluster using `quickstart.md`
+- [x] T030 [P] Configure Dapr Service Invocation between Frontend and Task API in `frontend/src/lib/apiClient.ts`
+- [x] T031 [P] Create Kubernetes Deployment and Service for Frontend in `infra/k8s/base/frontend/`
+- [x] T032 Configure Kubernetes Ingress for public frontend access in `infra/k8s/base/ingress.yaml`
+- [x] T033 Create Kustomize overlays for Minikube and Cloud in `infra/k8s/overlays/`
+- [x] T034 Set up GitHub Actions workflow for automated Cloud K8s deployment in `.github/workflows/deploy.yaml`
+- [x] T035 [P] Implement health check endpoints in all backend services for Kubernetes Liveness/Readiness probes
+- [x] T036 Final end-to-end validation on Cloud cluster using `quickstart.md`
 
 ---
 

@@ -55,7 +55,7 @@ export default function TaskItem({ task, onUpdateTask, onDeleteTask }: TaskItemP
             </h3>
 
             <div className="text-sm text-gray-400 mt-1">
-              <span>{formatDate(task.due_date)}</span>
+              <span>{formatDate(task.dueDate)}</span>
             </div>
           </div>
 

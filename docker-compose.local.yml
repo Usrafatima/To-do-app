@@ -1,0 +1,261 @@
+services:
+  # -----------------
+  # Infrastructure
+  # -----------------
+  redis:
+    image: redis:alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - taskpilot-net
+
+  redpanda:
+    image: docker.redpanda.com/redpandadata/redpanda:latest
+    container_name: redpanda
+    command:
+      - redpanda start
+      - --smp 1
+      - --memory 1G
+      - --reserve-memory 0M
+      - --overprovisioned
+      - --node-id 0
+      - --check=false
+      - --kafka-addr PLAIN://0.0.0.0:9092,OUTSIDE://0.0.0.0:29092
+      - --advertise-kafka-addr PLAIN://redpanda:9092,OUTSIDE://localhost:29092
+    ports:
+      - "29092:29092"
+    networks:
+      - taskpilot-net
+
+  placement:
+    image: "daprio/dapr:1.14.4"
+    container_name: placement
+    command: ["./placement", "-port", "50006"]
+    ports:
+      - "50006:50006"
+    networks:
+      - taskpilot-net
+
+  # -----------------
+  # Task Service
+  # -----------------
+  task-service:
+    build:
+      context: ./backend/task-service
+      dockerfile: Dockerfile
+    container_name: task-service
+    environment:
+      - DATABASE_URL=sqlite:////app/data/test.db
+      - SECRET_KEY=${SECRET_KEY}
+      - ALGORITHM=${ALGORITHM}
+      - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - HUGGINGFACE_API_TOKEN=${HUGGINGFACE_API_TOKEN}
+      - DAPR_HTTP_PORT=3500
+      - DAPR_GRPC_PORT=50001
+      - DAPR_HOST=task-service-dapr
+      - DAPR_RUNTIME_HOST=task-service-dapr
+    volumes:
+      - shared-data:/app/data
+    networks:
+      - taskpilot-net
+    depends_on:
+      - redis
+      - redpanda
+      - placement
+
+  task-service-dapr:
+    image: "daprio/daprd:1.14.4"
+    container_name: task-service-dapr
+    command: [
+      "./daprd",
+      "-app-id", "task-service",
+      "-app-port", "8000",
+      "-app-channel-address", "task-service",
+      "-dapr-http-port", "3500",
+      "-dapr-listen-addresses", "0.0.0.0",
+      "-components-path", "/components",
+      "-config", "/config/config.yaml",
+      "-placement-host-address", "placement:50006"
+    ]
+    volumes:
+      - ./infra/local-dapr/components:/components
+      - ./infra/dapr:/config
+    networks:
+      - taskpilot-net
+    depends_on:
+      - task-service
+
+  # -----------------
+  # Audit Service
+  # -----------------
+  audit-service:
+    build:
+      context: ./backend/audit-service
+      dockerfile: Dockerfile
+    container_name: audit-service
+    environment:
+      - DATABASE_URL=sqlite:////app/data/test.db
+      - DAPR_HTTP_PORT=3500
+      - DAPR_GRPC_PORT=50001
+      - DAPR_HOST=audit-service-dapr
+      - DAPR_RUNTIME_HOST=audit-service-dapr
+    volumes:
+      - shared-data:/app/data
+    networks:
+      - taskpilot-net
+    depends_on:
+      - redis
+      - redpanda
+      - placement
+
+  audit-service-dapr:
+    image: "daprio/daprd:1.14.4"
+    container_name: audit-service-dapr
+    command: [
+      "./daprd",
+      "-app-id", "audit-service",
+      "-app-port", "8000",
+      "-app-channel-address", "audit-service",
+      "-dapr-http-port", "3500",
+      "-dapr-listen-addresses", "0.0.0.0",
+      "-components-path", "/components",
+      "-placement-host-address", "placement:50006"
+    ]
+    volumes:
+      - ./infra/local-dapr/components:/components
+    networks:
+      - taskpilot-net
+    depends_on:
+      - audit-service
+
+  # -----------------
+  # Auth Service
+  # -----------------
+  auth-service:
+    build:
+      context: ./backend/auth-service
+      dockerfile: Dockerfile
+    container_name: auth-service
+    environment:
+      - DATABASE_URL=sqlite:////app/data/test.db
+      - SECRET_KEY=${SECRET_KEY}
+      - ALGORITHM=${ALGORITHM}
+      - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - HUGGINGFACE_API_TOKEN=${HUGGINGFACE_API_TOKEN}
+      - DAPR_HTTP_PORT=3500
+      - DAPR_GRPC_PORT=50001
+      - DAPR_HOST=auth-service-dapr
+      - DAPR_RUNTIME_HOST=auth-service-dapr
+    volumes:
+      - shared-data:/app/data
+    networks:
+      - taskpilot-net
+    depends_on:
+      - redis
+      - placement
+
+  auth-service-dapr:
+    image: "daprio/daprd:1.14.4"
+    container_name: auth-service-dapr
+    command: [
+      "./daprd",
+      "-app-id", "auth-service",
+      "-app-port", "8000",
+      "-app-channel-address", "auth-service",
+      "-dapr-http-port", "3500",
+      "-dapr-listen-addresses", "0.0.0.0",
+      "-components-path", "/components",
+      "-placement-host-address", "placement:50006"
+    ]
+    volumes:
+      - ./infra/local-dapr/components:/components
+    networks:
+      - taskpilot-net
+    depends_on:
+      - auth-service
+
+  # -----------------
+  # Chat Service (Monolith Backend)
+  # -----------------
+  chat-service:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: chat-service
+    environment:
+      - DATABASE_URL=sqlite:////app/data/test.db
+      - SECRET_KEY=${SECRET_KEY}
+      - ALGORITHM=${ALGORITHM}
+      - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - HUGGINGFACE_API_TOKEN=${HUGGINGFACE_API_TOKEN}
+      - DAPR_HTTP_PORT=3500
+      - DAPR_GRPC_PORT=50001
+      - DAPR_HOST=chat-service-dapr
+      - DAPR_RUNTIME_HOST=chat-service-dapr
+    volumes:
+      - shared-data:/app/data
+    networks:
+      - taskpilot-net
+    depends_on:
+      - redis
+      - placement
+
+  chat-service-dapr:
+    image: "daprio/daprd:1.14.4"
+    container_name: chat-service-dapr
+    command: [
+      "./daprd",
+      "-app-id", "chat-service",
+      "-app-port", "8000",
+      "-app-channel-address", "chat-service",
+      "-dapr-http-port", "3500",
+      "-dapr-listen-addresses", "0.0.0.0",
+      "-components-path", "/components",
+      "-placement-host-address", "placement:50006"
+    ]
+    volumes:
+      - ./infra/local-dapr/components:/components
+    networks:
+      - taskpilot-net
+    depends_on:
+      - chat-service
+
+  # -----------------
+  # Frontend
+  # -----------------
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: /api/proxy
+        NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+    container_name: frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_BASE_URL=http://localhost:3000
+      - BACKEND_INTERNAL_URL=http://auth-service:8000
+      - USE_MICROSERVICES=true
+      - HOSTNAME=0.0.0.0
+    networks:
+      - taskpilot-net
+    depends_on:
+      - task-service
+      - auth-service
+      - task-service-dapr
+      - auth-service-dapr
+      - audit-service-dapr
+      - chat-service-dapr
+
+networks:
+  taskpilot-net:
+    driver: bridge
+    name: taskpilot-net
+
+volumes:
+  shared-data:

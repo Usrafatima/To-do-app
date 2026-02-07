@@ -17,7 +17,7 @@ class ChatResponse(BaseModel):
     conversation_id: str
     response: str
 
-@router.post("/", response_model=ChatResponse)
+@router.post("", response_model=ChatResponse)
 def chat_with_agent(
     request: ChatRequest,
     user: User = Depends(get_current_active_user)

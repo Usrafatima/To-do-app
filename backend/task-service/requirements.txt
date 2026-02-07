@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+pydantic
+dapr==1.14.0
+python-dotenv
+sqlmodel
+pydantic-settings
