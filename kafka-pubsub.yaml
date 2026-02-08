@@ -1,0 +1,19 @@
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: pubsub
+  namespace: taskpilot
+spec:
+  type: pubsub.kafka
+  version: v1
+  metadata:
+  - name: brokers
+    value: "my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"
+  - name: authType
+    value: "none"
+  - name: consumerGroup
+    value: "taskpilot-group"
+  - name: publishMaxRetries
+    value: "5"
+  - name: disableEntityManagement
+    value: "false"
